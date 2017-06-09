@@ -3,7 +3,7 @@
  */
 class Utils {
     private val downloader = Download()
-//    private val parser = Parser(downloader.readFile())
+    private val parser = Parser(downloader.readFile(""))//add path to file
 
 
 }
