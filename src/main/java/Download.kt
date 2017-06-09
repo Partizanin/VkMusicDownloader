@@ -39,12 +39,12 @@ class Download() {
         var length: Int = inStream.read(buffer)
         //copy the file content in bytes
 
-        var writed = buffer.size.toLong()
+        var writed = length
 
         do {
-            writed += buffer.size.toLong()
+            writed += length
 
-            println("${countPercent(contentSize, writed)}%")
+            println("${countPercent(contentSize, writed.toLong())}% $writed")
 
             outStream.write(buffer, 0, length)
 
@@ -61,7 +61,7 @@ class Download() {
         return alreadyWrite * 100 / fullSize
     }
 
-    fun readFile(): List<String> {
+    fun readFile(filePart: String): List<String> {
         return File("C:\\Users\\topic\\Downloads\\fore phone 2017-06-06 15-39.m3u").readLines()
     }
 }
