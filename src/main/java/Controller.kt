@@ -1,3 +1,4 @@
+import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -17,21 +18,22 @@ class Controller : View("") {
 
     override val root: AnchorPane by fxml("View.fxml")
 
-    val button: Button by fxid("button")
-    val label: Label by fxid("label")
-    val pBar: ProgressBar by fxid("pBar")
-    val pIndicator: ProgressIndicator by fxid("pIndicator")
-    val image: ImageView by fxid("image")
+    private val button: Button by fxid("button")
+    private val label: Label by fxid("label")
+    private val pBar: ProgressBar by fxid("pBar")
+    private val pIndicator: ProgressIndicator by fxid("pIndicator")
+    private val image: ImageView by fxid("image")
+    private var utils = Utils()
 
     init {
         image.isVisible = false
-
+        pBar.progressProperty().bind(utils.progressProperty)
+        pIndicator.progressProperty().bind(utils.progressProperty)
         root.onDragOver = EventHandler {
             if (!image.isVisible) {
                 image.isVisible = true
             }
             if (it.dragboard.hasFiles()) {
-                println("hasFile")
                 it.acceptTransferModes(TransferMode.COPY)
             } else {
                 it.consume()
@@ -41,14 +43,9 @@ class Controller : View("") {
         root.onDragDropped = EventHandler {
             val db = it.dragboard
             var success = false
-            println("hasFile2")
             if (db.hasFiles()) {
                 success = true
-                var filePath: String?
-                for (file in db.files) {
-                    filePath = file.absolutePath
-                    println(filePath)
-                }
+                downloadTracks(db.files[0].readLines(Charsets.UTF_8))
             }
             it.isDropCompleted = success
             it.consume()
@@ -73,6 +70,26 @@ class Controller : View("") {
         }
     }
 
+
+    fun downloadTracks(fileLines: List<String>) {
+        runAsync {
+            val task: Task<Unit> = object : Task<Unit>() {
+                override fun call() {
+
+                    for (filesUrlsAndNames in utils.getListOfFilesUrlsAndNames(fileLines)) {
+                        val fileName = "c:\\Users\\topic\\Downloads\\2017-06-07.22-06\\".plus(filesUrlsAndNames[0])
+                        val url = filesUrlsAndNames[1]
+                        utils.downloadFile(url, fileName)
+                    }
+
+                    updateMessage("Loading customers")
+                    updateProgress(0.4, 1.0)
+                }
+
+            }
+            Thread(task).start()
+        }
+    }
 
     private var clicks: Int = 0
 }

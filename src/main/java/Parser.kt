@@ -1,17 +1,17 @@
 /**
  * Created by Partizanin on 07.06.2017 15:06:16.
  */
-class Parser(val sData: List<String>) {
+class Parser {
 
-    fun parse(): ArrayList<Array<String>> {
+    fun parse(fileLines: List<String>): ArrayList<Array<String>> {
         val result = ArrayList<Array<String>>()
         var i = 0
 
-        while (i < sData.size - 1) {
-            val currentLine = sData[i]
+        while (i < fileLines.size - 1) {
+            val currentLine = fileLines[i]
 
             if (!currentLine.contains("#EXTM3U")) {
-                val resultLine = arrayOf(getName(currentLine), sData[i + 1])
+                val resultLine = arrayOf(getName(currentLine), fileLines[i + 1])
 
                 result.add(resultLine)
                 i += 2
@@ -31,6 +31,4 @@ class Parser(val sData: List<String>) {
         result = result.replace("/", " ")
         return result
     }
-
-
 }

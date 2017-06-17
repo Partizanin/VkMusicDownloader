@@ -9,8 +9,8 @@ fun main(args: Array<String>) {
 //    val parse = parser.parse()
 //
 //    for (i in 0..0) {
-//        val filePath = "c:\\Users\\topic\\Downloads\\2017-06-07.22-06\\".plus(parse[i][0])
-//        download.downloadData2(parse[i][1], filePath)
+//        val fileLines = "c:\\Users\\topic\\Downloads\\2017-06-07.22-06\\".plus(parse[i][0])
+//        download.downloadData2(parse[i][1], fileLines)
 //    }
 
 }

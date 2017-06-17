@@ -1,9 +1,7 @@
-import java.io.File
+import javafx.beans.property.SimpleDoubleProperty
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.net.URL
-import java.nio.channels.Channels
-import java.nio.channels.ReadableByteChannel
 
 /**
  * Created by Partizanin on 06.06.2017 23:44:03.
@@ -11,9 +9,15 @@ import java.nio.channels.ReadableByteChannel
 
 class Download() {
 
-    constructor(sData: ArrayList<String>) : this()
+    var progressProp: SimpleDoubleProperty = SimpleDoubleProperty()
+    var sData: ArrayList<String> = arrayListOf()
 
-    fun downloadData(url: String, fileName: String) {
+    constructor(sData: ArrayList<String>, progressProperty: SimpleDoubleProperty) : this() {
+        this.progressProp = progressProperty
+        this.sData = sData
+    }
+
+    /*fun downloadData(url: String, fileName: String) {
         print("Start download ${fileName.substringAfter("test\\")} ")
         val fileNameFinal = fileName.plus(".mp3")
         val website: URL = URL(url)
@@ -23,7 +27,7 @@ class Download() {
         val fos: FileOutputStream = FileOutputStream(fileNameFinal)
         fos.channel.transferFrom(rbc, 0, Long.MAX_VALUE)
         print(" Finish download \n")
-    }
+    }*/
 
     fun downloadData2(url: String, fileName: String) {
         print("Start download ${fileName.substringAfter("test\\")} ")
@@ -44,7 +48,10 @@ class Download() {
         do {
             writed += length
 
-            println("${countPercent(contentSize, writed.toLong())}% $writed")
+
+            val countPercent = countPercent(contentSize, writed.toLong())
+            progressProp.set(countPercent.toDouble() / 100)
+            println("$countPercent% $writed")
 
             outStream.write(buffer, 0, length)
 
@@ -57,11 +64,13 @@ class Download() {
 
     }
 
-    fun countPercent(fullSize: Long, alreadyWrite: Long): Long {
+    private fun countPercent(fullSize: Long, alreadyWrite: Long): Long {
         return alreadyWrite * 100 / fullSize
     }
 
+/*
     fun readFile(filePart: String): List<String> {
         return File("C:\\Users\\topic\\Downloads\\fore phone 2017-06-06 15-39.m3u").readLines()
     }
+*/
 }
