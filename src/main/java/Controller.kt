@@ -1,3 +1,4 @@
+import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.event.EventHandler
 import javafx.scene.control.Button
@@ -76,10 +77,17 @@ class Controller : View("") {
             val task: Task<Unit> = object : Task<Unit>() {
                 override fun call() {
 
-                    for (filesUrlsAndNames in utils.getListOfFilesUrlsAndNames(fileLines)) {
-                        val fileName = "c:\\Users\\topic\\Downloads\\2017-06-07.22-06\\".plus(filesUrlsAndNames[0])
+                    val listOfFilesUrlsAndNames = utils.getListOfFilesUrlsAndNames(fileLines)
+                    for (filesUrlsAndNames in listOfFilesUrlsAndNames) {
+                        val trackName = filesUrlsAndNames[0]
+                        Platform.runLater { label.text = trackName }
+                        val fileName = "c:\\Users\\topic\\Downloads\\2017-06-07.22-06\\".plus(trackName)
                         val url = filesUrlsAndNames[1]
                         utils.downloadFile(url, fileName)
+
+                        if (listOfFilesUrlsAndNames.indexOf(filesUrlsAndNames) == listOfFilesUrlsAndNames.size - 1) {
+                            label.text = ""
+                        }
                     }
 
                     updateMessage("Loading customers")

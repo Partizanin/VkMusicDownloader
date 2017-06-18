@@ -6,9 +6,11 @@ import javafx.beans.property.SimpleDoubleProperty
 class Utils() {
     var sData: ArrayList<String> = arrayListOf()
     var progressProperty: SimpleDoubleProperty = SimpleDoubleProperty()
+    var trackName = ""
+
 
     private val parser = Parser()//add path to file
-    private val downloader = Download(sData, progressProperty)
+    private val downloader = Download(sData, progressProperty, trackName)
 
     constructor(sData: ArrayList<String>) : this() {
         this.sData = sData

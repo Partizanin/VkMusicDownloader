@@ -11,10 +11,13 @@ class Download() {
 
     var progressProp: SimpleDoubleProperty = SimpleDoubleProperty()
     var sData: ArrayList<String> = arrayListOf()
+    var trackName: String = ""
 
-    constructor(sData: ArrayList<String>, progressProperty: SimpleDoubleProperty) : this() {
+
+    constructor(sData: ArrayList<String>, progressProperty: SimpleDoubleProperty, trackName: String) : this() {
         this.progressProp = progressProperty
         this.sData = sData
+        this.trackName = trackName
     }
 
     /*fun downloadData(url: String, fileName: String) {
@@ -31,6 +34,7 @@ class Download() {
 
     fun downloadData2(url: String, fileName: String) {
         print("Start download ${fileName.substringAfter("test\\")} ")
+        trackName = fileName
         val fileNameFinal = fileName.plus(".mp3")
         val urlConnection = URL(url).openConnection()
         val contentSize = urlConnection.contentLengthLong
@@ -51,7 +55,7 @@ class Download() {
 
             val countPercent = countPercent(contentSize, writed.toLong())
             progressProp.set(countPercent.toDouble() / 100)
-            println("$countPercent% $writed")
+//            println("$countPercent% $writed")
 
             outStream.write(buffer, 0, length)
 
