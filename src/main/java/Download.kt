@@ -11,36 +11,21 @@ class Download() {
 
     var progressProp: SimpleDoubleProperty = SimpleDoubleProperty()
     var sData: ArrayList<String> = arrayListOf()
-    var trackName: String = ""
 
 
-    constructor(sData: ArrayList<String>, progressProperty: SimpleDoubleProperty, trackName: String) : this() {
+    constructor(sData: ArrayList<String>, progressProperty: SimpleDoubleProperty) : this() {
         this.progressProp = progressProperty
         this.sData = sData
-        this.trackName = trackName
     }
 
-    /*fun downloadData(url: String, fileName: String) {
-        print("Start download ${fileName.substringAfter("test\\")} ")
-        val fileNameFinal = fileName.plus(".mp3")
-        val website: URL = URL(url)
-        val openStream = website.openStream()
-        val rbc: ReadableByteChannel = Channels.newChannel(openStream)
-        print(openStream.available())
-        val fos: FileOutputStream = FileOutputStream(fileNameFinal)
-        fos.channel.transferFrom(rbc, 0, Long.MAX_VALUE)
-        print(" Finish download \n")
-    }*/
-
     fun downloadData2(url: String, fileName: String) {
+
         print("Start download ${fileName.substringAfter("test\\")} ")
-        trackName = fileName
-        val fileNameFinal = fileName.plus(".mp3")
         val urlConnection = URL(url).openConnection()
         val contentSize = urlConnection.contentLengthLong
-        println(contentSize)
+        println("$contentSize bytes")
         val inStream = urlConnection.getInputStream()
-        val outStream: OutputStream = FileOutputStream(fileNameFinal)
+        val outStream: OutputStream = FileOutputStream(fileName)
 
         val buffer = ByteArray(1024)
 
@@ -55,7 +40,6 @@ class Download() {
 
             val countPercent = countPercent(contentSize, writed.toLong())
             progressProp.set(countPercent.toDouble() / 100)
-//            println("$countPercent% $writed")
 
             outStream.write(buffer, 0, length)
 
@@ -65,16 +49,13 @@ class Download() {
 
         inStream.close()
         outStream.close()
-
     }
 
     private fun countPercent(fullSize: Long, alreadyWrite: Long): Long {
         return alreadyWrite * 100 / fullSize
     }
 
-/*
-    fun readFile(filePart: String): List<String> {
-        return File("C:\\Users\\topic\\Downloads\\fore phone 2017-06-06 15-39.m3u").readLines()
+    fun getFileSize(fileUrl: String): Int {
+        return URL(fileUrl).openConnection().contentLength
     }
-*/
 }

@@ -1,10 +1,7 @@
 import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.event.EventHandler
-import javafx.scene.control.Button
-import javafx.scene.control.Label
-import javafx.scene.control.ProgressBar
-import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.TransferMode
@@ -24,12 +21,16 @@ class Controller : View("") {
     private val pBar: ProgressBar by fxid("pBar")
     private val pIndicator: ProgressIndicator by fxid("pIndicator")
     private val image: ImageView by fxid("image")
+    private val listView: ListView<Thread> by fxid("listVIew")
+    private var fileLines: List<String> = ArrayList<String>()
+
     private var utils = Utils()
 
     init {
         image.isVisible = false
         pBar.progressProperty().bind(utils.progressProperty)
         pIndicator.progressProperty().bind(utils.progressProperty)
+
         root.onDragOver = EventHandler {
             if (!image.isVisible) {
                 image.isVisible = true
@@ -46,7 +47,7 @@ class Controller : View("") {
             var success = false
             if (db.hasFiles()) {
                 success = true
-                downloadTracks(db.files[0].readLines(Charsets.UTF_8))
+                fileLines = db.files[0].readLines(Charsets.UTF_8)
             }
             it.isDropCompleted = success
             it.consume()
@@ -63,11 +64,7 @@ class Controller : View("") {
 
         image.image = Image("drag-drop.jpg")
         button.setOnAction {
-            clicks++
-            label.text = "clicked: $clicks"
-            val toDouble = ((clicks.toDouble() * 10) / 100)
-            pBar.progress = toDouble
-            pIndicator.progress = toDouble
+            downloadTracks(fileLines)
         }
     }
 
@@ -77,21 +74,30 @@ class Controller : View("") {
             val task: Task<Unit> = object : Task<Unit>() {
                 override fun call() {
 
-                    val listOfFilesUrlsAndNames = utils.getListOfFilesUrlsAndNames(fileLines)
-                    for (filesUrlsAndNames in listOfFilesUrlsAndNames) {
-                        val trackName = filesUrlsAndNames[0]
-                        Platform.runLater { label.text = trackName }
-                        val fileName = "c:\\Users\\topic\\Downloads\\2017-06-07.22-06\\".plus(trackName)
-                        val url = filesUrlsAndNames[1]
-                        utils.downloadFile(url, fileName)
+                    val listOfFilesUrlsAndNames = utils.getListOfTracks(fileLines)
+                    for (track in listOfFilesUrlsAndNames) {
+                        val trackName = track.trackName
 
-                        if (listOfFilesUrlsAndNames.indexOf(filesUrlsAndNames) == listOfFilesUrlsAndNames.size - 1) {
-                            label.text = ""
+                        val fileName = "c:\\Users\\topic\\Downloads\\2017-06-07.22-06\\".plus("$trackName.mp3")
+
+                        if (!utils.isFileExist(fileName)) {
+
+                            Platform.runLater { label.text = trackName }
+
+                            utils.downloadFile(track.trackUrl, fileName)
+
+                            if (listOfFilesUrlsAndNames.indexOf(track) == listOfFilesUrlsAndNames.size - 1) {
+                                Platform.runLater {
+                                    label.text = ""
+                                }
+                            }
+                        } else {
+                            println("$trackName is exist")
                         }
-                    }
 
-                    updateMessage("Loading customers")
-                    updateProgress(0.4, 1.0)
+                        updateMessage("Loading customers")
+                        updateProgress(0.4, 1.0)
+                    }
                 }
 
             }

@@ -3,17 +3,16 @@
  */
 class Parser {
 
-    fun parse(fileLines: List<String>): ArrayList<Array<String>> {
-        val result = ArrayList<Array<String>>()
+    fun parse(fileLines: List<String>): ArrayList<TrackObcject> {
+        var list = ArrayList<TrackObcject>(20)
         var i = 0
 
         while (i < fileLines.size - 1) {
             val currentLine = fileLines[i]
 
             if (!currentLine.contains("#EXTM3U")) {
-                val resultLine = arrayOf(getName(currentLine), fileLines[i + 1])
-
-                result.add(resultLine)
+                val trackObcject = TrackObcject(getName(currentLine), fileLines[i + 1])
+                list.add(trackObcject)
                 i += 2
             } else {
                 i++
@@ -21,7 +20,7 @@ class Parser {
 
 
         }
-        return result
+        return list
     }
 
     private fun getName(line: String): String {
