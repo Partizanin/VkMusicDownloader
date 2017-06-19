@@ -5,11 +5,11 @@
 <?import javafx.scene.layout.AnchorPane?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8">
     <children>
-        <Button fx:id="button" layoutY="375.0" mnemonicParsing="false" text="Download"/>
+        <Button fx:id="downloadButton" layoutY="375.0" mnemonicParsing="false" text="Download"/>
         <ProgressBar fx:id="pBar" layoutX="397.0" layoutY="381.0" prefWidth="200.0" progress="0.0"/>
         <ProgressIndicator fx:id="pIndicator" layoutX="488.0" layoutY="379.0" prefHeight="19.0" prefWidth="33.0"
                            progress="0.0"/>
-        <Label fx:id="label" layoutX="104.0" layoutY="382.0" text="test"/>
+        <Label fx:id="label" layoutX="104.0" layoutY="382.0" text="Название трека"/>
         <ListView fx:id="listView" prefHeight="374.0" prefWidth="601.0"/>
         <ImageView fx:id="image" fitHeight="374.0" fitWidth="494.0" layoutX="54.0" pickOnBounds="true"
                    preserveRatio="true"/>
