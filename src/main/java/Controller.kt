@@ -31,6 +31,50 @@ class Controller : View("") {
     var trackList: ObservableList<TrackObject> = FXCollections.observableArrayList()
 
     init {
+
+        /*listView.cellFormat{
+            graphic = cache {
+                form {
+                    fieldset {
+                        *//*name Filed*//*field {
+                        val trackName = it.trackName
+                        println(trackName)
+                        label(trackName) {
+                            style {
+                                fontSize = 22.px
+                                fontWeight = FontWeight.BOLD
+                            }
+                        }
+                    }
+                        *//*sizeFiled*//*field {
+                        label(it.trackSizeBytes) {
+                            style { *//*todo:add styles*//* }
+                        }
+                    }
+                        val status = it.trackStatus
+                        *//*status filed*//*field {
+                        label(status) {
+
+                            var textcolor = ""
+
+                            when (status) {
+                                "readyForDownloading" -> textcolor = "blue"
+                                "badUrl" -> textcolor = "red"
+                                "Downloaded" -> textcolor = "chartreuse"
+                            }
+
+                            style {
+                                textFill = c(textcolor)
+                            }
+                        }
+                    }
+                    }
+                }
+            }
+        }*/
+
+
+        listView.isVisible = false
         listView.items = trackList
         downloadButton.isDisable = true
 
@@ -54,9 +98,35 @@ class Controller : View("") {
             }
         }
 
-
         downloadButton.setOnAction { downloadTracks() }
+
+        trackList.onChange {
+            listView.isVisible = trackList.isNotEmpty()
+            downloadButton.isDisable = !trackList.filter { it.trackStatus == "readyForDownloading" }.isNotEmpty()
+            updateTrackStatus()
+        }
+        downloadButton.setOnMouseClicked {
+            downloadButton.isVisible = false
+        }
+
     }
+
+    private fun updateTrackStatus() {
+        for (trackObject in trackList) {
+            if (trackObject.trackStatus == "noStatus") {
+                val fileUrl = trackObject.trackUrl
+                if (utils.isUrlActive(fileUrl)) {
+                    trackObject.trackSizeBytes = utils.getFileSize(fileUrl)
+                    trackObject.trackStatus = "readyForDownloading"
+                } else {
+                    trackObject.trackStatus = "badUrl"
+                }
+            } else if (trackObject.trackStatus == "Downloaded") {
+                trackObject.trackSizeBytes = utils.getFileSize(trackObject.filePath)
+            }
+        }
+    }
+
 
     private fun getDroppedContent(it: DragEvent) {
 
@@ -74,8 +144,6 @@ class Controller : View("") {
                     trackList.addAll(tempTrackList)
                 }
 
-
-                downloadButton.isDisable = !trackList.filter { it.trackStatus == "readyForDownloading" }.isNotEmpty()
 
             }
             it.isDropCompleted = success
@@ -117,13 +185,13 @@ class Controller : View("") {
     }
 
 
-    fun downloadTracks() {
+    private fun downloadTracks() {
         println(trackList)
 
         runAsync {
             val task: Task<Unit> = object : Task<Unit>() {
                 override fun call() {
-                    utils.downloadFile(trackList, utils)
+                    utils.downloadFile(trackList)
                     updateMessage("Loading customers")
                     updateProgress(0.4, 1.0)
                 }
@@ -132,5 +200,4 @@ class Controller : View("") {
             Thread(task).start()
         }
     }
-
 }

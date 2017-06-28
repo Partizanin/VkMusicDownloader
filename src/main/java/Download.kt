@@ -18,12 +18,13 @@ class Download() {
     var sData: ArrayList<String> = arrayListOf()
 
 
+
     constructor(sData: ArrayList<String>, progressProperty: SimpleDoubleProperty) : this() {
         this.progressProp = progressProperty
         this.sData = sData
     }
 
-    fun downloadData2(trackList: ObservableList<TrackObject>, utils: Utils, trackNameProp: SimpleStringProperty) {
+    fun downloadData2(trackList: ObservableList<TrackObject>, trackNameProp: SimpleStringProperty) {
 
 
         for (i in 0..trackList.size) {
@@ -36,14 +37,12 @@ class Download() {
                 println("$trackName is exist")
             } else {
 
-                track.trackSizeBytes = utils.getFileSize(track.trackUrl)
-
                 if (isUrlActive(track.trackUrl)) {
                     val urlConnection = URL(track.trackUrl).openConnection()
 
                     print("Start download $trackName")
                     val contentSize = urlConnection.contentLengthLong
-                    println("$contentSize bytes")
+                    println(" $contentSize bytes")
                     val inStream = urlConnection.getInputStream()
                     val outStream: OutputStream = FileOutputStream(filePathAndName)
 
@@ -73,6 +72,7 @@ class Download() {
                 }
             }
             Platform.runLater {
+                track.trackStatus = "Downloaded"
                 trackList[i] = track
             }
         }
