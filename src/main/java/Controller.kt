@@ -103,7 +103,9 @@ class Controller : View("") {
         trackList.onChange {
             listView.isVisible = trackList.isNotEmpty()
             downloadButton.isDisable = !trackList.filter { it.trackStatus == "readyForDownloading" }.isNotEmpty()
-            updateTrackStatus()
+            runAsync {
+                updateTrackStatus()
+            }
         }
         downloadButton.setOnMouseClicked {
             downloadButton.isVisible = false
@@ -125,6 +127,7 @@ class Controller : View("") {
                 trackObject.trackSizeBytes = utils.getFileSize(trackObject.filePath)
             }
         }
+        listView.refresh()
     }
 
 
