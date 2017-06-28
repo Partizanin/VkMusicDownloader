@@ -3,13 +3,14 @@ import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.concurrent.Task
 import javafx.event.EventHandler
+import javafx.scene.Parent
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.DataFormat
 import javafx.scene.input.DragEvent
 import javafx.scene.input.TransferMode
-import javafx.scene.layout.AnchorPane
+import javafx.scene.text.FontWeight
 import tornadofx.*
 
 
@@ -18,7 +19,7 @@ import tornadofx.*
  */
 class Controller : View("") {
 
-    override val root: AnchorPane by fxml("View.fxml")
+    override val root: Parent by fxml("View.fxml")
 
     private val downloadButton: Button by fxid("downloadButton")
     private val label: Label by fxid("label")
@@ -32,46 +33,44 @@ class Controller : View("") {
 
     init {
 
-        /*listView.cellFormat{
-            graphic = cache {
-                form {
-                    fieldset {
-                        *//*name Filed*//*field {
-                        val trackName = it.trackName
-                        println(trackName)
-                        label(trackName) {
-                            style {
-                                fontSize = 22.px
-                                fontWeight = FontWeight.BOLD
-                            }
+        listView.cellFormat {
+            graphic = form {
+                fieldset {
+                    /*name Filed*/field {
+                    val trackName = it.trackName
+                    label(trackName) {
+                        style {
+                            fontSize = 22.px
+                            fontWeight = FontWeight.BOLD
                         }
-                    }
-                        *//*sizeFiled*//*field {
-                        label(it.trackSizeBytes) {
-                            style { *//*todo:add styles*//* }
-                        }
-                    }
-                        val status = it.trackStatus
-                        *//*status filed*//*field {
-                        label(status) {
-
-                            var textcolor = ""
-
-                            when (status) {
-                                "readyForDownloading" -> textcolor = "blue"
-                                "badUrl" -> textcolor = "red"
-                                "Downloaded" -> textcolor = "chartreuse"
-                            }
-
-                            style {
-                                textFill = c(textcolor)
-                            }
-                        }
-                    }
                     }
                 }
+                    /*sizeFiled*/field {
+                    label(it.trackSizeBytes) {
+                        style { /*todo:add styles */ }
+                    }
+                }
+                    val status = it.trackStatus
+                    /*status filed*/field {
+                    label(status) {
+
+                        var textColor = "black"
+
+                        when (status) {
+                            "readyForDownloading" -> textColor = "blue"
+                            "badUrl" -> textColor = "red"
+                            "Downloaded" -> textColor = "chartreuse"
+                        }
+
+                        style {
+                            textFill = c(textColor)
+                        }
+                    }
+                }
+                }
             }
-        }*/
+
+        }
 
 
         listView.isVisible = false
@@ -127,6 +126,7 @@ class Controller : View("") {
                 trackObject.trackSizeBytes = utils.getFileSize(trackObject.filePath)
             }
         }
+
         listView.refresh()
     }
 
