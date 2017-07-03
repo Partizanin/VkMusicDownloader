@@ -1,23 +1,24 @@
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.ObservableList
 import java.io.File
 
 /**
- * Created by Partizanin on 07.06.2017 22:38:03.
+ * Created by Partizanin on 07.06.2017 22:38:03 00:54:43.
  */
 class Utils {
-    var sData: ArrayList<String> = arrayListOf()
+    var refreshProp: SimpleBooleanProperty = SimpleBooleanProperty(false)
     var progressProperty: SimpleDoubleProperty = SimpleDoubleProperty()
     var trackName: SimpleStringProperty = SimpleStringProperty()
 
 
     private val parser = Parser()//add path to file
-    private val downloader = Download(sData, progressProperty)
+    private val downloader = Download(progressProperty)
 
 
     fun downloadFile(trackList: ObservableList<TrackObject>) {
-        return downloader.downloadData2(trackList, trackName)
+        return downloader.downloadData(trackList, trackName, refreshProp)
     }
 
     private fun isFileExist(filePathName: String): Boolean {

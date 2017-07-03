@@ -1,33 +1,24 @@
-import javafx.application.Platform
+import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.ObservableList
+import javafx.concurrent.Task
 import sun.net.www.protocol.https.HttpsURLConnectionImpl
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.net.ConnectException
 import java.net.URL
 
 /**
  * Created by Partizanin on 06.06.2017 23:44:03.
  */
 
-class Download() {
+class Download(private var progressProp: SimpleDoubleProperty) {
 
-    var progressProp: SimpleDoubleProperty = SimpleDoubleProperty()
-    var sData: ArrayList<String> = arrayListOf()
+    fun downloadData(trackList: ObservableList<TrackObject>, trackNameProp: SimpleStringProperty, refreshProp: SimpleBooleanProperty) {
 
-
-
-    constructor(sData: ArrayList<String>, progressProperty: SimpleDoubleProperty) : this() {
-        this.progressProp = progressProperty
-        this.sData = sData
-    }
-
-    fun downloadData2(trackList: ObservableList<TrackObject>, trackNameProp: SimpleStringProperty) {
-
-
-        for (i in 0..trackList.size) {
+        for (i in 0 until trackList.size) {
             val track = trackList[i]
             val trackName = track.trackName
             trackNameProp.set(trackName)
@@ -71,11 +62,25 @@ class Download() {
                     outStream.close()
                 }
             }
-            Platform.runLater {
-                track.trackStatus = "Downloaded"
-                trackList[i] = track
+
+            val task: Task<Unit> = object : Task<Unit>() {
+                override fun call() {
+                    track.isDownloaded = true
+                    trackList[i] = track
+                    updateMessage("Loading customers")
+                    updateProgress(0.4, 1.0)
+                }
+
             }
+
+            val thread = Thread(task)
+            thread.isDaemon = true
+            thread.start()
+            refreshProp.set(true)
+
         }
+
+
     }
 
     private fun countPercent(fullSize: Long, alreadyWrite: Long): Long {
@@ -99,8 +104,24 @@ class Download() {
     }
 
     fun isUrlActive(url: String): Boolean {
-        val urlConnection = URL(url).openConnection()
+        var result = false
 
-        return (urlConnection as HttpsURLConnectionImpl).responseCode != 404
+        val url1 = URL(url)
+        val urlConnection = url1.openConnection()
+        try {
+
+            val responseCode = (urlConnection as HttpsURLConnectionImpl).responseCode
+            if (responseCode == -1 || responseCode == 404) {
+                return false
+            } else if (responseCode == 200) {
+                return true
+            }
+
+        } catch (e: ConnectException) {
+            println("Connection timed out")
+        }
+
+        return result
+
     }
 }

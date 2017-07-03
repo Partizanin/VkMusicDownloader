@@ -9,12 +9,11 @@ data class TrackObject(val trackName: String, val trackUrl: String) {
         }
 
     private fun setTrackSize(value: String): String {
-        var result = ""
+        var result = value
         if (value.length > 6) {
             result = value.substring(0, value.length - 6) + " " + value.substring(value.length - 6, value.length)
-        } else {
-            result = value
         }
+
         return result
     }
 
@@ -23,8 +22,8 @@ data class TrackObject(val trackName: String, val trackUrl: String) {
             if (value) {
                 trackStatus = "Downloaded"
             }
+            field = value
         }
-
     var filePath = ""
     var trackStatus: String = "noStatus"// noStatus,badUrl,Downloaded,readyForDownloading
     override fun toString(): String {
