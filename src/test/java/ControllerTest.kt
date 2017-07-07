@@ -16,42 +16,64 @@ internal class ControllerTest {
 
         o2.trackStatus = "badUrl"
         assertEquals(comp(o1, o2), -1)
+        assertEquals(comp(o2, o1), 1)
 
         o2.trackStatus = "Downloaded"
         assertEquals(comp(o1, o2), -1)
+        assertEquals(comp(o2, o1), 1)
 
         o2.trackStatus = "noStatus"
         assertEquals(comp(o1, o2), -1)
+        assertEquals(comp(o2, o1), 1)
 
         o2.trackStatus = "readyForDownloading"
         assertEquals(comp(o1, o2), 0)
-
-        /*o1 test end*/
-
-        o2.trackStatus = "readyForDownloading"
-
-        o1.trackStatus = "badUrl"
-        assertEquals(comp(o2, o1), -1)
-
-        o1.trackStatus = "Downloaded"
-        assertEquals(comp(o2, o1), -1)
-
-        o1.trackStatus = "noStatus"
-        assertEquals(comp(o2, o1), -1)
-
-        o1.trackStatus = "readyForDownloading"
         assertEquals(comp(o2, o1), 0)
 
-        /*o2test end*/
+        /*o1 test end readyForDownloading*/
+        /*o1 test  badUrl*/
+
+        o1.trackStatus = "badUrl"
+
+        o2.trackStatus = "badUrl"
+        assertEquals(comp(o1, o2), 0)
+
+        o2.trackStatus = "Downloaded"
+        assertEquals(comp(o1, o2), -1)
+        assertEquals(comp(o2, o1), 1)
+
+        o2.trackStatus = "noStatus"
+        assertEquals(comp(o1, o2), 1)
+        assertEquals(comp(o2, o1), 1)
+
+        /*o1test end for badUrl*/
+        /*o1 test  Downloaded*/
+
+        o1.trackStatus = "Downloaded"
 
 
-//        assertEquals(comp(o1,o2),1)
-//        assertEquals(comp(o1,o2),0)
+        o2.trackStatus = "Downloaded"
+        assertEquals(comp(o1, o2), 0)
+
+        o2.trackStatus = "noStatus"
+        assertEquals(comp(o1, o2), -1)
+        assertEquals(comp(o2, o1), 1)
+
+        /*o1test end for Downloaded*/
+        /*o1 test  noStatus*/
+
+        o1.trackStatus = "noStatus"
+
+        o2.trackStatus = "noStatus"
+        assertEquals(comp(o1, o2), 0)
+
+        /*o1test end for noStatus*/
+
     }
     // noStatus,badUrl,Downloaded,readyForDownloading
 
     private fun comp(o1: TrackObject, o2: TrackObject): Int {
-        var result = 2500
+        var result = 3
         when (o1.trackStatus) {
             "readyForDownloading" -> {
                 when (o2.trackStatus) {
@@ -63,6 +85,7 @@ internal class ControllerTest {
                 when (o2.trackStatus) {
                     "readyForDownloading" -> result = 1
                     "badUrl" -> result = 0
+                    "noStatus" -> result = 1
                     else -> result = -1
                 }
             }
@@ -77,6 +100,7 @@ internal class ControllerTest {
             "noStatus" -> {
                 when (o2.trackStatus) {
                     "noStatus" -> result = 0
+                    "Downloaded" -> result = 1
                     else -> result = 1
                 }
             }

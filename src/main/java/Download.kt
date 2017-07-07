@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.net.ConnectException
+import java.net.MalformedURLException
 import java.net.URL
 
 /**
@@ -105,8 +106,13 @@ class Download(private var progressProp: SimpleDoubleProperty) {
 
     fun isUrlActive(url: String): Boolean {
         var result = false
-
-        val url1 = URL(url)
+        var url1 = URL("https://www.google.com")
+        try {
+            url1 = URL(url)
+        } catch (e: MalformedURLException) {
+            println("badUrl")
+            return false
+        }
         val urlConnection = url1.openConnection()
         try {
 
@@ -118,7 +124,7 @@ class Download(private var progressProp: SimpleDoubleProperty) {
             }
 
         } catch (e: ConnectException) {
-            println("Connection timed out")
+            println("Connection timed out")/*todo: if connection not found after 1 second, not wait and close the connection*/
         }
 
         return result

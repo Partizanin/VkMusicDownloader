@@ -163,17 +163,40 @@ class Controller : View("") {
         } ui {
 
             trackList.sortWith(Comparator { o1, o2 ->
-                if (o1.trackStatus == "readyForDownloading" || o2.trackStatus == "readyForDownloading") {
-                    -1
-                } else if (o1.trackStatus == "badUrl" && o2.trackStatus == "Downloaded") {
-                    -1
-                } else if (o2.trackStatus == "badUrl" && o1.trackStatus == "Downloaded") {
-                    -1
-                } else if (o1.trackStatus < o2.trackStatus) {
-                    1
-                } else {
-                    0
+
+                when (o1.trackStatus) {
+                    "readyForDownloading" -> {
+                        when (o2.trackStatus) {
+                            "readyForDownloading" -> 0
+                            else -> -1
+                        }
+                    }
+                    "badUrl" -> {
+                        when (o2.trackStatus) {
+                            "readyForDownloading" -> 1
+                            "badUrl" -> 0
+                            "noStatus" -> 1
+                            else -> -1
+                        }
+                    }
+                    "Downloaded" -> {
+                        when (o2.trackStatus) {
+                            "readyForDownloading" -> 1
+                            "badUrl" -> 1
+                            "Downloaded" -> 0
+                        /*"noStatus"*/ else -> -1
+                        }
+                    }
+                /*"noStatus"*/ else -> {
+                    when (o2.trackStatus) {
+                        "noStatus" -> 0
+                        "Downloaded" -> 1
+                        else -> 1
+                    }
                 }
+
+                }
+
                 /*todo: implement correct comparator*/
             })
             trackList = trackList.reversed().observable()
